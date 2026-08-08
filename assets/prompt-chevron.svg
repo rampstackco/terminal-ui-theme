@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 24" width="16" height="24"
+     class="term-prompt-mark term-mark-chevron" role="img" aria-label="Prompt chevron">
+  <!-- The prompt chevron, drawn on the same 16x24 cell as the sigil and the
+       cursor so the three are interchangeable in a monospace column without
+       any of them shifting the baseline. The vertex sits at x=11.5 rather than
+       at the cell edge, which leaves a column of clearance before the text
+       that follows and stops the chevron reading as part of the first word.
+
+       Stroke only, so it takes its color from the surrounding text unless
+       components/glow.css overrides it. -->
+  <path class="term-art-line" fill="none" stroke="currentColor" stroke-width="2.25"
+        stroke-linecap="round" stroke-linejoin="round"
+        d="M4.5 6 L 11.5 12 L 4.5 18" />
+</svg>

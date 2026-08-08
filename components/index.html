@@ -1,0 +1,666 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Components | terminal-ui-theme</title>
+    <meta
+      name="description"
+      content="The six core components of terminal-ui-theme, rendered live with the markup to copy."
+    />
+
+    <!-- The real token file and the real component files, in that order. This
+         page holds no copy of any of them. -->
+    <link rel="stylesheet" href="../tokens/tokens.css" />
+    <link rel="stylesheet" href="./components.css" />
+    <link rel="stylesheet" href="./glow.css" />
+
+    <style>
+      /* Page chrome for this gallery only. Tokens throughout, no literals. */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--term-ground);
+        color: var(--term-ink);
+        font-family: var(--term-font-sans);
+        font-size: var(--term-text-body);
+        line-height: var(--term-leading-body);
+      }
+
+      .wrap {
+        max-width: var(--term-container);
+        margin: 0 auto;
+        padding: var(--term-space-12) var(--term-space-4) var(--term-space-24);
+      }
+
+      @media (min-width: 768px) {
+        .wrap {
+          padding-left: var(--term-space-6);
+          padding-right: var(--term-space-6);
+        }
+      }
+
+      h1 {
+        margin: 0 0 var(--term-space-3);
+        font-family: var(--term-font-mono);
+        font-size: var(--term-text-h1);
+        font-weight: var(--term-weight-bold);
+        line-height: var(--term-leading-tight);
+        letter-spacing: var(--term-tracking-tight);
+      }
+
+      .page-lead {
+        max-width: var(--term-measure);
+        margin: 0 0 var(--term-space-12);
+        font-size: var(--term-text-lead);
+        color: var(--term-ink-muted);
+      }
+
+      section {
+        margin-top: var(--term-space-16);
+      }
+
+      h2 {
+        margin: 0 0 var(--term-space-2);
+        font-family: var(--term-font-mono);
+        font-size: var(--term-text-h2);
+        font-weight: var(--term-weight-bold);
+        line-height: var(--term-leading-snug);
+        letter-spacing: var(--term-tracking-tight);
+      }
+
+      .note {
+        max-width: var(--term-measure);
+        margin: 0 0 var(--term-space-6);
+        color: var(--term-ink-muted);
+        font-size: var(--term-text-sm);
+      }
+
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--term-space-3);
+        margin-bottom: var(--term-space-6);
+      }
+
+      .grid {
+        display: grid;
+        gap: var(--term-space-4);
+        margin-bottom: var(--term-space-6);
+        grid-template-columns: 1fr;
+      }
+
+      @media (min-width: 768px) {
+        .grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      .stack {
+        display: grid;
+        gap: var(--term-space-6);
+        max-width: 420px;
+        margin-bottom: var(--term-space-6);
+      }
+
+      pre {
+        overflow-x: auto;
+        margin: 0;
+        padding: var(--term-space-4);
+        background: var(--term-surface);
+        border: var(--term-border-width) solid var(--term-border-color);
+        border-radius: var(--term-radius);
+      }
+
+      code {
+        font-family: var(--term-font-mono);
+        font-size: var(--term-text-sm);
+        line-height: var(--term-leading-dense);
+      }
+
+      a {
+        color: var(--term-ink-muted);
+      }
+
+      .swatches {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: var(--term-space-3);
+        margin-bottom: var(--term-space-6);
+      }
+
+      .swatch {
+        padding: var(--term-space-3);
+        border: var(--term-border-width) solid var(--term-border-color);
+        border-radius: var(--term-radius);
+        font-family: var(--term-font-mono);
+        font-size: var(--term-text-xs);
+        line-height: var(--term-leading-dense);
+      }
+
+      .swatch b {
+        display: block;
+        font-weight: var(--term-weight-medium);
+      }
+
+      .swatch span {
+        color: var(--term-ink-faint);
+      }
+
+      .marks {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--term-space-8);
+        margin-bottom: var(--term-space-6);
+      }
+
+      footer {
+        margin-top: var(--term-space-24);
+        padding-top: var(--term-space-6);
+        border-top: var(--term-border-width) solid var(--term-border-color);
+        color: var(--term-ink-faint);
+        font-size: var(--term-text-sm);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <h1>Components</h1>
+      <p class="page-lead">
+        Six components, rendered by the real stylesheets. Copy the markup, copy
+        <code>tokens/tokens.css</code> and <code>components/components.css</code>,
+        and you have the register. Every value resolves back to a token, so
+        retheming is one file. See <a href="../README.md">the README</a> for the
+        position map and <a href="../CUSTOMIZE.md">CUSTOMIZE.md</a> for moving it.
+      </p>
+
+      <!-- ================= LOG ================= -->
+      <section aria-labelledby="log-heading">
+        <h2 id="log-heading">Log</h2>
+        <p class="note">
+          The component this register exists for, so it goes first. Fixed tracks
+          for time and level, the message taking the rest. The level is the only
+          column allowed to be colored, because it is the only one the eye scans
+          down. Every level carries its word as well as its color. Below 768px
+          the message drops to its own row rather than being squeezed into
+          twelve characters.
+        </p>
+
+        <div class="term-panel term-panel-flush" style="margin-bottom: var(--term-space-6)">
+          <div class="term-panel-body">
+            <ul class="term-log term-log-wide">
+              <li class="term-log-row">
+                <span class="term-log-time">08:14:02</span>
+                <span class="term-log-level term-log-level-info">info</span>
+                <span class="term-log-source">api-gateway</span>
+                <span class="term-log-msg">accepted 1,204 req in 60s, p99 84ms</span>
+              </li>
+              <li class="term-log-row">
+                <span class="term-log-time">08:14:07</span>
+                <span class="term-log-level term-log-level-ok">ok</span>
+                <span class="term-log-source">billing-sync</span>
+                <span class="term-log-msg">reconciled 318 invoices, 0 drift</span>
+              </li>
+              <li class="term-log-row term-log-row-fail">
+                <span class="term-log-time">08:14:11</span>
+                <span class="term-log-level term-log-level-fail">fail</span>
+                <span class="term-log-source">image-worker</span>
+                <span class="term-log-msg">upload aborted after 3 retries: connection reset by peer</span>
+              </li>
+              <li class="term-log-row">
+                <span class="term-log-time">08:14:11</span>
+                <span class="term-log-level term-log-level-warn">warn</span>
+                <span class="term-log-source">image-worker</span>
+                <span class="term-log-msg">queue depth 812, above the 500 mark for 4m</span>
+              </li>
+              <li class="term-log-row term-log-row-live">
+                <span class="term-log-time">08:14:23</span>
+                <span class="term-log-level term-log-level-ok">ok</span>
+                <span class="term-log-source">image-worker</span>
+                <span class="term-log-msg">retry succeeded, queue draining</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <pre><code>&lt;ul class="term-log term-log-wide"&gt;
+  &lt;li class="term-log-row term-log-row-fail"&gt;
+    &lt;span class="term-log-time"&gt;08:14:11&lt;/span&gt;
+    &lt;span class="term-log-level term-log-level-fail"&gt;fail&lt;/span&gt;
+    &lt;span class="term-log-source"&gt;image-worker&lt;/span&gt;
+    &lt;span class="term-log-msg"&gt;upload aborted after 3 retries&lt;/span&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+      </section>
+
+      <!-- ================= BUTTON ================= -->
+      <section aria-labelledby="button-heading">
+        <h2 id="button-heading">Button</h2>
+        <p class="note">
+          Four variants and two sizes. Only the accent variant is filled, and a
+          page gets one of it: a second fill in the accent color puts two marks
+          meaning "here" on the same screen. Destructive is outlined rather than
+          filled, so the dangerous button never outranks the default one.
+        </p>
+
+        <div class="row">
+          <button class="term-btn term-btn-accent" type="button">Start tailing</button>
+          <button class="term-btn term-btn-default" type="button">Filter</button>
+          <button class="term-btn term-btn-ghost" type="button">Cancel</button>
+          <button class="term-btn term-btn-danger" type="button">Mute source</button>
+          <button class="term-btn term-btn-default" type="button" disabled>Disabled</button>
+        </div>
+
+        <div class="row">
+          <button class="term-btn term-btn-sm term-btn-default" type="button">Small</button>
+          <button class="term-btn term-btn-default" type="button">Base</button>
+        </div>
+
+        <pre><code>&lt;button class="term-btn term-btn-accent" type="button"&gt;Start tailing&lt;/button&gt;
+&lt;button class="term-btn term-btn-default" type="button"&gt;Filter&lt;/button&gt;
+&lt;button class="term-btn term-btn-ghost" type="button"&gt;Cancel&lt;/button&gt;
+&lt;button class="term-btn term-btn-danger" type="button"&gt;Mute source&lt;/button&gt;</code></pre>
+      </section>
+
+      <!-- ================= PANEL ================= -->
+      <section aria-labelledby="panel-heading">
+        <h2 id="panel-heading">Panel</h2>
+        <p class="note">
+          Elevation here is a hairline and a ground step, never a shadow: a
+          shadow on a near-black ground either fails to render or renders as a
+          smudge. The lead variant is the one place the edge glow appears, and
+          it takes the panel's own color, so a failing panel would glow red from
+          the same declaration. One per screen. The flush variant drops the body
+          padding so rows can run edge to edge.
+        </p>
+
+        <div class="grid">
+          <div class="term-panel">
+            <div class="term-panel-head">
+              <h3 class="term-panel-title">Base</h3>
+              <span class="term-chip term-chip-idle">default</span>
+            </div>
+            <p class="term-panel-body">
+              Hairline rule, surface ground. This is the surface most of a page
+              is built from.
+            </p>
+          </div>
+
+          <div class="term-panel term-panel-lead">
+            <div class="term-panel-head">
+              <h3 class="term-panel-title">Lead</h3>
+              <span class="term-chip term-chip-ok"><span class="term-dot"></span>live</span>
+            </div>
+            <p class="term-panel-body">
+              Heavier rule and the tier-2 edge glow. This panel is spending the
+              screen's entire emphasis budget.
+            </p>
+            <div class="term-panel-foot">
+              <button class="term-btn term-btn-sm term-btn-default" type="button">Open</button>
+            </div>
+          </div>
+
+          <div class="term-panel">
+            <div class="term-panel-head">
+              <h3 class="term-panel-title">With a foot</h3>
+              <span class="term-chip term-chip-warn"><span class="term-dot"></span>held</span>
+            </div>
+            <p class="term-panel-body">
+              Head and foot are separated by rules rather than by spacing, which
+              is what keeps the panel dense without the parts running together.
+            </p>
+            <div class="term-panel-foot">
+              <button class="term-btn term-btn-sm term-btn-default" type="button">Retry</button>
+              <button class="term-btn term-btn-sm term-btn-ghost" type="button">Dismiss</button>
+            </div>
+          </div>
+        </div>
+
+        <pre><code>&lt;div class="term-panel term-panel-lead"&gt;
+  &lt;div class="term-panel-head"&gt;
+    &lt;h3 class="term-panel-title"&gt;Lead&lt;/h3&gt;
+    &lt;span class="term-chip term-chip-ok"&gt;&lt;span class="term-dot"&gt;&lt;/span&gt;live&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;p class="term-panel-body"&gt;Body copy.&lt;/p&gt;
+  &lt;div class="term-panel-foot"&gt;
+    &lt;button class="term-btn term-btn-sm term-btn-default" type="button"&gt;Open&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </section>
+
+      <!-- ================= INPUT ================= -->
+      <section aria-labelledby="input-heading">
+        <h2 id="input-heading">Input</h2>
+        <p class="note">
+          Four states: default, focus, invalid, disabled. The field sits on the
+          page ground rather than the surface, so it reads as a hole in the
+          panel rather than a tile on it. Focus is a solid accent outline and
+          not a glow, because a glow is a color cue and color alone is not a
+          focus indicator. Body text holds at 16px, which is what stops iOS
+          Safari zooming the page on focus.
+        </p>
+
+        <div class="stack">
+          <div class="term-field">
+            <label class="term-label" for="f-service">Service</label>
+            <input class="term-input" id="f-service" type="text" placeholder="image-worker" />
+            <span class="term-hint">Lowercase, dashes, no spaces.</span>
+          </div>
+
+          <div class="term-field">
+            <label class="term-label" for="f-match">Match pattern</label>
+            <input
+              class="term-input"
+              id="f-match"
+              type="text"
+              value="aborted after [ retries"
+              aria-invalid="true"
+              aria-describedby="f-match-error"
+            />
+            <span class="term-error" id="f-match-error">
+              Unclosed character class at column 19.
+            </span>
+          </div>
+
+          <div class="term-field">
+            <label class="term-label" for="f-region">Region</label>
+            <input class="term-input" id="f-region" type="text" value="us-east" disabled />
+            <span class="term-hint">Set once at project creation.</span>
+          </div>
+        </div>
+
+        <pre><code>&lt;div class="term-field"&gt;
+  &lt;label class="term-label" for="f-match"&gt;Match pattern&lt;/label&gt;
+  &lt;input class="term-input" id="f-match" type="text"
+         aria-invalid="true" aria-describedby="f-match-error" /&gt;
+  &lt;span class="term-error" id="f-match-error"&gt;Unclosed character class.&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+      </section>
+
+      <!-- ================= CHIP ================= -->
+      <section aria-labelledby="chip-heading">
+        <h2 id="chip-heading">Chip</h2>
+        <p class="note">
+          Five statuses. Each variant sets exactly one property, its color; the
+          tint, the rule and the dot all derive from it with color-mix, so
+          adding a sixth status is one line. Ok is the accent itself rather than
+          a second green, because two greens a few degrees apart read as a
+          rendering fault. The solid modifier reverses to ground-on-fill for a
+          chip that has to survive on a busy row, where every status clears 7:1.
+        </p>
+
+        <div class="row">
+          <span class="term-chip term-chip-idle"><span class="term-dot"></span>queued</span>
+          <span class="term-chip term-chip-ok"><span class="term-dot"></span>ok</span>
+          <span class="term-chip term-chip-info"><span class="term-dot"></span>info</span>
+          <span class="term-chip term-chip-warn"><span class="term-dot"></span>warn</span>
+          <span class="term-chip term-chip-fail"><span class="term-dot"></span>fail</span>
+        </div>
+
+        <div class="row">
+          <span class="term-chip term-chip-ok term-chip-solid"><span>ok</span></span>
+          <span class="term-chip term-chip-warn term-chip-solid"><span>warn</span></span>
+          <span class="term-chip term-chip-fail term-chip-solid"><span>fail</span></span>
+        </div>
+
+        <pre><code>&lt;span class="term-chip term-chip-fail"&gt;&lt;span class="term-dot"&gt;&lt;/span&gt;fail&lt;/span&gt;
+&lt;span class="term-chip term-chip-ok term-chip-solid"&gt;&lt;span&gt;ok&lt;/span&gt;&lt;/span&gt;</code></pre>
+      </section>
+
+      <!-- ================= NAV ================= -->
+      <section aria-labelledby="nav-heading">
+        <h2 id="nav-heading">Nav</h2>
+        <p class="note">
+          One bar with a prompt-chevron lockup, inline links above 768px, and a
+          disclosure panel below it. The panel is a <code>&lt;details&gt;</code>
+          element, so the pattern ships without a line of JavaScript and keeps
+          working when scripts fail. The current page is marked by the accent
+          and by an underline, so the mark does not rest on color alone. Narrow
+          the window to watch it swap.
+        </p>
+
+        <div style="margin-bottom: var(--term-space-6)">
+          <nav class="term-nav" aria-label="Component example">
+            <div class="term-nav-inner">
+              <a class="term-nav-brand" href="#nav-heading">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 16 24"
+                  width="16"
+                  height="24"
+                  class="term-prompt-mark"
+                  aria-hidden="true"
+                >
+                  <path
+                    class="term-art-line"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.25"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M4.5 6 L 11.5 12 L 4.5 18"
+                  />
+                </svg>
+                nightjar
+              </a>
+
+              <ul class="term-nav-links">
+                <li><a class="term-nav-link" href="#nav-heading" aria-current="page">Tail</a></li>
+                <li><a class="term-nav-link" href="#nav-heading">Rules</a></li>
+                <li><a class="term-nav-link" href="#nav-heading">Docs</a></li>
+              </ul>
+
+              <a class="term-btn term-btn-sm term-btn-accent term-nav-cta" href="#nav-heading">
+                Sign in
+              </a>
+
+              <details class="term-nav-disclosure">
+                <summary aria-label="Open menu">Menu</summary>
+                <ul class="term-nav-panel">
+                  <li><a class="term-nav-link" href="#nav-heading" aria-current="page">Tail</a></li>
+                  <li><a class="term-nav-link" href="#nav-heading">Rules</a></li>
+                  <li><a class="term-nav-link" href="#nav-heading">Docs</a></li>
+                  <li><a class="term-nav-link" href="#nav-heading">Sign in</a></li>
+                </ul>
+              </details>
+            </div>
+          </nav>
+        </div>
+
+        <pre><code>&lt;nav class="term-nav" aria-label="Main"&gt;
+  &lt;div class="term-nav-inner"&gt;
+    &lt;a class="term-nav-brand" href="/"&gt;&lt;!-- inline prompt-chevron.svg --&gt;nightjar&lt;/a&gt;
+    &lt;ul class="term-nav-links"&gt;
+      &lt;li&gt;&lt;a class="term-nav-link" href="/tail" aria-current="page"&gt;Tail&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a class="term-nav-link" href="/rules"&gt;Rules&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;a class="term-btn term-btn-sm term-btn-accent term-nav-cta" href="/signin"&gt;Sign in&lt;/a&gt;
+    &lt;details class="term-nav-disclosure"&gt;
+      &lt;summary aria-label="Open menu"&gt;Menu&lt;/summary&gt;
+      &lt;ul class="term-nav-panel"&gt;
+        &lt;li&gt;&lt;a class="term-nav-link" href="/tail"&gt;Tail&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/details&gt;
+  &lt;/div&gt;
+&lt;/nav&gt;</code></pre>
+      </section>
+
+      <!-- ================= THE GLOW LAYER ================= -->
+      <section aria-labelledby="glow-heading">
+        <h2 id="glow-heading">The glow layer</h2>
+        <p class="note">
+          Two tiers of text glow, two of edge glow, and the prompt and cursor
+          marks. Both tiers are built on <code>currentColor</code>, so one pair
+          of declarations serves every status. Nothing below 14px carries a
+          glow: the halo spreads into the counters of the letterforms and closes
+          them, so at small sizes glow costs legibility outright. The contrast
+          in this theme holds with every glow switched off, which is the test.
+        </p>
+
+        <div class="row">
+          <span style="font-family: var(--term-font-mono); font-size: var(--term-text-h3); color: var(--term-accent)">no glow</span>
+          <span class="term-glow" style="font-family: var(--term-font-mono); font-size: var(--term-text-h3); color: var(--term-accent)">tier 1</span>
+          <span class="term-glow-2" style="font-family: var(--term-font-mono); font-size: var(--term-text-h3); color: var(--term-accent)">tier 2</span>
+          <span class="term-glow-2" style="font-family: var(--term-font-mono); font-size: var(--term-text-h3); color: var(--term-status-fail)">inherits</span>
+        </div>
+
+        <div class="marks">
+          <span class="term-prompt" style="font-size: var(--term-text-h3)">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 16 24"
+              width="16"
+              height="24"
+              class="term-prompt-mark"
+              aria-hidden="true"
+            >
+              <path
+                class="term-art-line"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.25"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4.5 6 L 11.5 12 L 4.5 18"
+              />
+            </svg>
+            chevron
+          </span>
+
+          <span class="term-prompt" style="font-size: var(--term-text-h3)">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 16 24"
+              width="16"
+              height="24"
+              class="term-prompt-mark"
+              aria-hidden="true"
+            >
+              <g
+                class="term-art-line"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M11.5 8.4 C 11.5 6.6, 10 5.6, 8 5.6 C 6 5.6, 4.6 6.6, 4.6 8.3 C 4.6 11.8, 11.5 10.6, 11.5 14.4 C 11.5 16.4, 10 17.6, 8 17.6 C 6 17.6, 4.5 16.4, 4.5 14.6" />
+                <path d="M8 3.2 L 8 20.8" />
+              </g>
+            </svg>
+            sigil
+          </span>
+
+          <span style="font-family: var(--term-font-mono); font-size: var(--term-text-h3)">
+            cursor<span class="term-cursor" aria-hidden="true"></span>
+          </span>
+
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 96 96"
+            width="96"
+            height="96"
+            class="term-glyph"
+            aria-hidden="true"
+          >
+            <g
+              class="term-art-line"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+              stroke-linecap="round"
+            >
+              <path d="M12 14 L 12 82" />
+              <path d="M24 20 L 84 20" />
+              <path d="M24 32 L 62 32" />
+              <path d="M24 44 L 78 44" />
+              <path d="M24 56 L 48 56" />
+              <path d="M24 68 L 71 68" />
+              <path d="M24 80 L 57 80" />
+            </g>
+          </svg>
+
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 96 96"
+            width="96"
+            height="96"
+            class="term-glyph term-glyph-lit"
+            aria-hidden="true"
+          >
+            <g
+              class="term-art-line"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M12 38 L 12 12 L 38 12" />
+              <path d="M58 12 L 84 12 L 84 38" />
+              <path d="M84 58 L 84 84 L 58 84" />
+              <path d="M38 84 L 12 84 L 12 58" />
+            </g>
+          </svg>
+        </div>
+
+        <pre><code>&lt;span class="term-glow"&gt;tier 1&lt;/span&gt;
+&lt;span class="term-glow-2"&gt;tier 2&lt;/span&gt;
+&lt;span class="term-cursor" aria-hidden="true"&gt;&lt;/span&gt;</code></pre>
+      </section>
+
+      <!-- ================= PALETTE ================= -->
+      <section aria-labelledby="palette-heading">
+        <h2 id="palette-heading">Palette, measured</h2>
+        <p class="note">
+          A dark theme has three grounds, not one, and the raised ground is the
+          least forgiving of the three. Each figure below is the worst of the
+          three, which is the one that has to clear AA. A theme measured only
+          against the page background passes its own audit and still fails
+          inside a hovered row, which is where dense UI puts most of its text.
+        </p>
+
+        <div class="swatches">
+          <div class="swatch" style="color: var(--term-ink)">
+            <b>--term-ink</b><span>12.63:1 worst case</span>
+          </div>
+          <div class="swatch" style="color: var(--term-ink-muted)">
+            <b>--term-ink-muted</b><span>6.65:1 worst case</span>
+          </div>
+          <div class="swatch" style="color: var(--term-ink-faint)">
+            <b>--term-ink-faint</b><span>4.93:1 worst case</span>
+          </div>
+          <div class="swatch" style="color: var(--term-accent)">
+            <b>--term-accent</b><span>9.62:1 worst case</span>
+          </div>
+          <div class="swatch" style="color: var(--term-status-warn)">
+            <b>--term-status-warn</b><span>9.01:1 worst case</span>
+          </div>
+          <div class="swatch" style="color: var(--term-status-fail)">
+            <b>--term-status-fail</b><span>5.99:1 worst case</span>
+          </div>
+          <div class="swatch" style="color: var(--term-status-info)">
+            <b>--term-status-info</b><span>8.68:1 worst case</span>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <p>
+          terminal-ui-theme. MIT. Questions go to
+          <a href="https://github.com/rampstackco/claude-skills/discussions">
+            the claude-skills discussions
+          </a>.
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>

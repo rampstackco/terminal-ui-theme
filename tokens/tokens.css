@@ -1,0 +1,286 @@
+/* ==========================================================================
+   terminal-ui-theme / tokens
+   --------------------------------------------------------------------------
+   This file is the single source of truth. Every literal value in the theme
+   lives here exactly once. The Tailwind adapters next to it (theme.css for
+   v4, preset.js for v3) hold no values of their own; they point at these
+   custom properties with var().
+
+   Each group is annotated with the creative-direction axis the choice serves.
+   The four axes are tone register, aesthetic philosophy, audience
+   relationship, and sensory ambition. Read them at
+   https://rampstack.co/framework/creative-direction
+
+   Contrast ratios in the comments are WCAG 2.1 relative-luminance figures,
+   measured against the named surface. A dark theme has three grounds rather
+   than one, so every foreground below is quoted against all three, and the
+   worst of the three is the number that has to clear AA. Dark themes fail AA
+   by quietly passing on the page background and failing inside the panel;
+   quoting one ratio is how that ships.
+   ========================================================================== */
+
+:root {
+  /* ----------------------------------------------------------------------
+     GROUNDS
+     Aesthetic philosophy axis. Three grounds, each a step lighter, and no
+     step larger than it has to be. Elevation in this register is carried by
+     a hairline rule rather than by a shadow, so the grounds only have to be
+     told apart, not stacked. None of them is #000: a true black clips on OLED
+     and takes the faint green cast out of the ink, which is the one thing
+     making this a phosphor screen rather than a grey one.
+     ---------------------------------------------------------------------- */
+  --term-ground: #0a0e0c;         /* the page, and the inside of a log pane */
+  --term-surface: #111713;        /* panels, cards, the nav bar */
+  --term-surface-raised: #19201b; /* rows, inputs, the hovered line */
+
+  /* ----------------------------------------------------------------------
+     INK
+     Aesthetic philosophy axis. Three weights of text and no more. Light text
+     on a dark ground blooms optically, so the top weight is held below pure
+     white; #fff against this ground reads as a halo rather than as a letter.
+     ---------------------------------------------------------------------- */
+  --term-ink: #d9e3db;        /* body and headings.  14.76 / 13.81 / 12.63 */
+  --term-ink-muted: #9aa79f;  /* secondary, labels.   7.77 /  7.27 /  6.65 */
+  --term-ink-faint: #828f88;  /* timestamps, comments. 5.77 / 5.39 / 4.93 */
+
+  /* ----------------------------------------------------------------------
+     THE RULE
+     Aesthetic philosophy axis. Editorial Restrained keeps the color count to
+     a base, an accent and a hairline, and this is the hairline. It is a
+     boundary and not a signal, so it deliberately sits below the 3:1 UI
+     contrast floor: a rule loud enough to clear 3:1 on this ground would
+     out-shout the accent, and the accent is the only thing on the page
+     allowed to be loud. Nothing is encoded by the rule alone.
+     ---------------------------------------------------------------------- */
+  --term-line: #2a352e;        /* 1.52 on ground, 1.43 on surface */
+  --term-line-strong: #38443b; /* the one boundary that owns the screen */
+
+  /* ----------------------------------------------------------------------
+     THE ACCENT
+     Aesthetic philosophy axis. Exactly one, in the phosphor green lineage,
+     and every other color on the page is a status. One accent is what keeps
+     this register readable at density: when a screen holds four hundred
+     lines, the eye needs a single color that means "here", and a second
+     decorative color spends the only budget that color has.
+
+     Green rather than amber is a lineage choice and reverses cleanly.
+     CUSTOMIZE.md documents the swap.
+     ---------------------------------------------------------------------- */
+  --term-accent: #3fe07a;      /* 11.24 / 10.52 / 9.62 */
+  --term-accent-ink: var(--term-ground); /* on a filled accent: 11.24 */
+
+  /* ----------------------------------------------------------------------
+     STATUS
+     Aesthetic philosophy axis, and the one group in this theme where the
+     semantic color is the aesthetic rather than a layer on top of it. A
+     terminal has always encoded state as color, so the palette and the
+     meaning are the same decision here.
+
+     Ok is the accent itself and not a fourth green. A separate success color
+     would sit a few degrees from the accent and read as a rendering fault
+     rather than as a distinction.
+
+     Every one of these is quoted on all three grounds because status text is
+     the thing most likely to be rendered inside a raised row, which is the
+     darkest-contrast case and the one a single-ground measurement misses.
+     ---------------------------------------------------------------------- */
+  --term-status-ok: var(--term-accent);    /* 11.24 / 10.52 /  9.62 */
+  --term-status-warn: #f0b53f;             /* 10.53 /  9.85 /  9.01 */
+  --term-status-fail: #ff6b6b;             /*  7.00 /  6.55 /  5.99 */
+  --term-status-info: #5cc8f0;             /* 10.15 /  9.50 /  8.68 */
+  --term-status-idle: var(--term-ink-faint); /* 5.77 / 5.39 / 4.93 */
+
+  /* Ink for text sitting on a filled status chip. The fills are light enough
+     that the page ground is the only readable foreground on them. */
+  --term-status-ink: var(--term-ground);
+
+  /* ----------------------------------------------------------------------
+     BORDER
+     Aesthetic philosophy axis. One pixel is the working weight, because a
+     hairline is what a rule drawn by a text renderer looks like and this
+     register is rooted in one. Two pixels is reserved for the element that
+     owns the screen. Anything heavier belongs to a different register.
+     ---------------------------------------------------------------------- */
+  --term-border-width: 1px;
+  --term-border-width-heavy: 2px;
+  --term-border-color: var(--term-line);
+
+  /* ----------------------------------------------------------------------
+     GLOW
+     Sensory ambition axis, and the emphasis system this register runs on in
+     place of shadow. A dark ground gives a shadow nothing to fall on, so
+     emphasis has to be additive: the emphasized thing emits rather than
+     casts.
+
+     Two tiers and no third. Tier 1 marks the live thing on a screen that has
+     one. Tier 2 is for the single element that owns the screen, and a page
+     using it twice has stopped using it.
+
+     Both tiers are built on currentColor rather than on the accent, which is
+     what lets one definition serve every status: a failing row glows red and
+     a passing row glows phosphor from the same two declarations, with no
+     per-status glow token and no chance of the pair drifting apart.
+
+     The alphas are deliberately low. Glow at full opacity thickens the letter
+     it is attached to and costs more legibility than the emphasis buys, which
+     is the failure this register is most often shipped with.
+     ---------------------------------------------------------------------- */
+  --term-glow-text-1: 0 0 6px color-mix(in srgb, currentColor 45%, transparent);
+  --term-glow-text-2:
+    0 0 4px color-mix(in srgb, currentColor 60%, transparent),
+    0 0 14px color-mix(in srgb, currentColor 32%, transparent);
+
+  --term-glow-edge-1: 0 0 8px color-mix(in srgb, currentColor 30%, transparent);
+  --term-glow-edge-2:
+    0 0 6px color-mix(in srgb, currentColor 45%, transparent),
+    0 0 20px color-mix(in srgb, currentColor 20%, transparent);
+
+  /* ----------------------------------------------------------------------
+     RADIUS
+     Audience relationship axis. Sharp rectangles are how this register
+     addresses an operator: a cell in a character grid has no corner radius,
+     and the further the corners round, the further the interface drifts from
+     the thing it is descended from. Two pixels is the whole allowance, enough
+     to stop a corner aliasing on a low-density display and not enough to read
+     as softness. The full radius exists for status dots and nothing else.
+     ---------------------------------------------------------------------- */
+  --term-radius-none: 0;
+  --term-radius: 2px;
+  --term-radius-full: 999px;
+
+  /* ----------------------------------------------------------------------
+     TYPE
+     Tone register axis. Monospace is the display voice here and not only the
+     code voice, which is the single decision that separates this register
+     from a dark-mode SaaS theme. A proportional heading over a monospace log
+     reads as two products; a monospace heading tells the reader what kind of
+     software this is before they have read the word.
+
+     The stack is system fonts, so the theme loads no webfont and makes no
+     network request. The sans face exists for prose that runs past a few
+     lines, because a paragraph set in monospace costs real reading speed and
+     Professional does not spend the reader's time on an effect.
+
+     Monospace faces ship fewer weights than proportional ones, so the scale
+     stops at 700. Emphasis is carried by color and glow instead, which is
+     also what a terminal does.
+     ---------------------------------------------------------------------- */
+  --term-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", "DejaVu Sans Mono", monospace;
+  --term-font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+
+  --term-weight-body: 400;
+  --term-weight-medium: 500;
+  --term-weight-bold: 700;
+
+  --term-text-display: 2.5rem;   /* 40px. Monospace runs wide, so the display
+                                    step is shorter here than a proportional
+                                    scale would put it. */
+  --term-text-h1: 1.875rem;      /* 30px */
+  --term-text-h2: 1.375rem;      /* 22px */
+  --term-text-h3: 1.0625rem;     /* 17px */
+  --term-text-lead: 1.0625rem;   /* 17px */
+  --term-text-body: 1rem;        /* 16px, the floor for form inputs on iOS */
+  --term-text-sm: 0.875rem;      /* 14px, the floor for any body content */
+  --term-text-xs: 0.75rem;       /* 12px, labels and chips only, never prose */
+
+  --term-leading-tight: 1.1;
+  --term-leading-snug: 1.35;
+  --term-leading-dense: 1.5;  /* log rows and tables: tight, still scannable */
+  --term-leading-body: 1.65;  /* prose. Light-on-dark needs more than dark-on-
+                                 light does, because the bloom closes the gap
+                                 between lines before the metrics do. */
+
+  --term-tracking-tight: -0.01em;
+  --term-tracking-wide: 0.08em;  /* uppercase labels only */
+
+  /* ----------------------------------------------------------------------
+     SPACE
+     Aesthetic philosophy axis. A four-pixel grid, because the density this
+     register trades on only holds together if every gap is on it. Section
+     rhythm is 64px on desktop and 48px on the phone.
+     ---------------------------------------------------------------------- */
+  --term-space-1: 4px;
+  --term-space-2: 8px;
+  --term-space-3: 12px;
+  --term-space-4: 16px;
+  --term-space-6: 24px;
+  --term-space-8: 32px;
+  --term-space-12: 48px;
+  --term-space-16: 64px;
+  --term-space-24: 96px;
+
+  --term-measure: 66ch;      /* prose measure */
+  --term-container: 1120px;  /* page max width */
+
+  /* ----------------------------------------------------------------------
+     DENSITY
+     Aesthetic philosophy axis. The log row is this register's unit of layout
+     the way a card is another register's, so its track list is a token rather
+     than a number retyped in three stylesheets. Timestamp and level are fixed
+     because a ragged left edge is what makes a dense list unscannable; the
+     message takes the rest.
+     ---------------------------------------------------------------------- */
+  --term-row-time: 9ch;
+  --term-row-level: 7ch;
+  --term-row-source: 14ch;
+  --term-row-gap: var(--term-space-3);
+  --term-row-pad-y: var(--term-space-2);
+
+  /* The track list itself, so the row's shape is declared once and both
+     Tailwind adapters can hand it to grid-template-columns without either of
+     them holding a value. minmax(0, 1fr) rather than 1fr, because a bare 1fr
+     track refuses to shrink below its content and a long unbroken log line
+     is exactly the content that would then widen the page. */
+  --term-grid-row:
+    var(--term-row-time) var(--term-row-level) minmax(0, 1fr);
+  --term-grid-row-wide:
+    var(--term-row-time) var(--term-row-level) var(--term-row-source)
+    minmax(0, 1fr);
+
+  /* ----------------------------------------------------------------------
+     MOTION
+     Sensory ambition axis. One motion, and it is the cursor blink. 1060ms is
+     close to the rate a hardware terminal blinked at, and the interval is
+     doing the work rather than an easing curve: a blink that fades is a
+     pulsing dot, and a blink that switches is a cursor.
+     ---------------------------------------------------------------------- */
+  --term-blink-interval: 1060ms;
+  --term-duration: 90ms;
+  --term-ease: cubic-bezier(0.2, 0, 0.2, 1);
+
+  /* ----------------------------------------------------------------------
+     FOCUS
+     Audience relationship axis. The ring is the accent, offset outside the
+     border so it never has to compete with a hairline for the same pixel.
+     Two pixels rather than three: at one-pixel borders a three-pixel ring
+     reads as a selected object rather than as a focused one.
+     ---------------------------------------------------------------------- */
+  --term-ring: var(--term-accent);  /* 11.24 on ground, clears the 3:1 UI floor */
+  --term-ring-width: 2px;
+  --term-ring-offset: 2px;
+
+  /* ----------------------------------------------------------------------
+     PROMPT AND CURSOR
+     Sensory ambition axis. The motif set is the prompt sigil and the cursor,
+     which are the two marks that say terminal without a single scanline. They
+     are sized in ch rather than px so they stay locked to the monospace
+     column they sit in, at any text size.
+     ---------------------------------------------------------------------- */
+  --term-cursor-width: 1ch;
+  --term-cursor-height: 1.15em;
+  --term-prompt-size: 1ch;
+  --term-prompt-gap: var(--term-space-2);
+  --term-glyph-size: 96px;  /* the free-standing marks in assets/ */
+}
+
+/* Anyone who has asked the operating system to stop animating gets a cursor
+   that is present and still. The block stays drawn, which is what carries the
+   meaning; it just stops switching. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --term-blink-interval: 0ms;
+    --term-duration: 1ms;
+  }
+}

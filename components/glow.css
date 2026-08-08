@@ -1,0 +1,246 @@
+/* ==========================================================================
+   terminal-ui-theme / glow layer
+   --------------------------------------------------------------------------
+   The emphasis system: glow tiers, the prompt and cursor motifs, and the
+   legibility rules that dense dark UI needs and that a token file has no way
+   to express.
+
+   This file and assets/ are separable from the rest of the theme. Delete both
+   and everything still works, quietly. That deletion is a real move along the
+   framework's axes and CUSTOMIZE.md names it.
+
+   Every value here is a var() reference to tokens.css. There is not one color
+   literal in this file.
+
+   Requires tokens.css. Load it, then components.css, then this:
+
+     <link rel="stylesheet" href="tokens/tokens.css" />
+     <link rel="stylesheet" href="components/components.css" />
+     <link rel="stylesheet" href="components/glow.css" />
+
+   The SVGs in assets/ are meant to be inlined into your markup rather than
+   loaded through <img>. An SVG in an <img> is an isolated document that cannot
+   read the page's custom properties, so it would have to carry its own color
+   values and the single source of truth would be gone. Inlined, the paint
+   rules below reach them. Opened on their own the files stay legible as line
+   art, which is what their presentation attributes are for.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   WHY A GLOW AND NOT A SHADOW
+
+   On a near-black ground a drop shadow has nothing to fall on. Elevation has
+   to be additive instead: the emphasized element emits, and the emission is
+   what separates it from the ground. That is the whole mechanic of this
+   layer, and it is why the register reads as a screen rather than as paper.
+
+   Both tiers are built on currentColor, so a glow takes the color of whatever
+   it is attached to. One pair of declarations covers every status: a failing
+   row glows red and a passing row glows phosphor without a per-status token
+   and without the pair drifting apart when someone adds a sixth status.
+   -------------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------------
+   TEXT TIERS
+   Two, and the second is for one element per screen.
+   -------------------------------------------------------------------------- */
+.term-glow {
+  text-shadow: var(--term-glow-text-1);
+}
+
+.term-glow-2 {
+  text-shadow: var(--term-glow-text-2);
+}
+
+/* --------------------------------------------------------------------------
+   EDGE TIERS
+   The same two steps as box-shadow, for panels, inputs and chips.
+   -------------------------------------------------------------------------- */
+.term-glow-edge {
+  box-shadow: var(--term-glow-edge-1);
+}
+
+.term-glow-edge-2 {
+  box-shadow: var(--term-glow-edge-2);
+}
+
+/* --------------------------------------------------------------------------
+   THE LEGIBILITY RULES
+
+   These are the reason this file exists as prose rather than as four more
+   tokens. Dark themes fail AA constantly, and they fail in ways a token file
+   cannot see, because a token holds a color and the failures below are all
+   about what happens to that color in context.
+
+   RULE 1. Glow is emphasis, never contrast.
+   A glowing letter is not a more legible letter. The halo spreads into the
+   counters (the enclosed space inside an a, an e, a 6) and closes them, so
+   at small sizes glow costs legibility outright. Nothing below 14px in this
+   theme carries a glow, and no glow is ever the thing making text readable.
+   The contrast has to hold with the glow switched off. Test it that way.
+
+   RULE 2. Never glow a large area of text.
+   Tier 1 on a heading is emphasis. Tier 1 on a paragraph is a blur filter
+   applied one letter at a time. The layer is scoped to single words, single
+   rows, and single marks.
+
+   RULE 3. Light on dark blooms, so the top ink weight sits below pure white.
+   --term-ink stops short of the top of the range on purpose. On a near-black
+   ground pure white overshoots: the letterform spreads optically and thin
+   strokes thicken, which is the same defect glow produces, arriving uninvited.
+   The token still clears 14.76:1 on the page ground, so nothing is lost by
+   stopping short. The value is in tokens.css and is not restated here, which
+   is the same reason no other file in this repo holds a color.
+
+   RULE 4. Measure against all three grounds, not against the page.
+   --term-ground, --term-surface and --term-surface-raised are three different
+   backgrounds and the raised one is the least forgiving. Every foreground in
+   tokens.css is quoted against all three, and the raised figure is the one
+   that has to clear AA. A dark theme that measures only against the page
+   background passes its own audit and still fails inside a hovered row, which
+   is where dense UI puts most of its text.
+
+   RULE 5. Color is never the only channel.
+   The status system here is genuinely semantic, which makes it tempting to
+   let color carry a meaning alone. It does not: every status in this theme is
+   carried by a word, and often by a dot or a leading rule as well. The color
+   makes the scan fast for the readers who can use it, and the word is what
+   makes the scan possible for everyone else.
+
+   RULE 6. Focus is an outline first and a glow second.
+   The focus ring uses the accent and clears 3:1 against all three grounds as
+   a solid outline. Glow is added on some elements because it looks right; it
+   is never the indicator. Removing every glow rule in this file leaves every
+   focus state intact, which is the test.
+   -------------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------------
+   THE PROMPT
+   The chevron or sigil that marks a line as something you type into. Inlined
+   from assets/prompt-*.svg so the paint rules here reach them.
+   -------------------------------------------------------------------------- */
+.term-prompt {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--term-prompt-gap);
+  font-family: var(--term-font-mono);
+}
+
+.term-prompt-mark {
+  flex: none;
+  align-self: center;
+  width: auto;
+  height: 1em;
+  color: var(--term-accent);
+}
+
+.term-prompt-mark .term-art-line {
+  stroke: currentColor;
+}
+
+.term-prompt-mark .term-art-fill {
+  fill: currentColor;
+}
+
+/* --------------------------------------------------------------------------
+   THE CURSOR
+   A block that switches rather than fades. The interval is the token; under
+   prefers-reduced-motion tokens.css sets it to 0ms, and the rule below turns
+   the animation off entirely so the block stays drawn and still. A cursor
+   that has stopped blinking is still a cursor; one that has disappeared is
+   not, which is why the reduced-motion case keeps the block.
+   -------------------------------------------------------------------------- */
+.term-cursor {
+  display: inline-block;
+  width: var(--term-cursor-width);
+  height: var(--term-cursor-height);
+  vertical-align: text-bottom;
+  background: var(--term-accent);
+  animation: term-blink var(--term-blink-interval) step-end infinite;
+}
+
+/* step-end rather than a curve: a blink that fades is a pulsing dot, and a
+   pulsing dot is decoration. The switch is the thing being imitated. */
+@keyframes term-blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* The bar cursor, for an inline caret inside running text. */
+.term-cursor-bar {
+  width: var(--term-border-width-heavy);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .term-cursor {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   FREE-STANDING MARKS
+   The larger glyphs in assets/, used as section marks rather than as icons.
+   One per section is the ceiling; past that the page starts to look like a
+   sticker sheet, which is a different register entirely.
+   -------------------------------------------------------------------------- */
+/* The unlit mark takes the faint ink and not the rule color. A mark drawn at
+   the rule's weight (1.90:1 on this ground) is not a quiet mark, it is one the
+   reader assumes failed to load: rendered at 3x it reads as an artifact rather
+   than as a placement. The faint ink clears AA at 4.93:1 in the worst case,
+   which is more than a decorative mark needs and exactly enough for it to look
+   like someone put it there. */
+.term-glyph {
+  display: block;
+  width: var(--term-glyph-size);
+  height: auto;
+  color: var(--term-ink-faint);
+}
+
+.term-glyph .term-art-line {
+  stroke: currentColor;
+}
+
+.term-glyph .term-art-fill {
+  fill: currentColor;
+}
+
+/* The one mark per page that is lit. It takes the accent and tier-1 text glow,
+   which on an SVG reaches the strokes because the glow is a drop-shadow filter
+   rather than a text-shadow. text-shadow does not paint SVG geometry. */
+.term-glyph-lit {
+  color: var(--term-accent);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, currentColor 45%, transparent));
+}
+
+/* --------------------------------------------------------------------------
+   THE LIVE ROW
+   A log row that is currently being written to. Tier-1 glow on the level plus
+   a leading rule, so it is findable by scanning the left margin rather than
+   by reading. The glow inherits the level's own status color.
+   -------------------------------------------------------------------------- */
+.term-log-row-live {
+  box-shadow: inset var(--term-border-width-heavy) 0 0 0 var(--term-accent);
+  background: color-mix(in srgb, var(--term-accent) 7%, transparent);
+}
+
+.term-log-row-live .term-log-level {
+  text-shadow: var(--term-glow-text-1);
+}
+
+/* --------------------------------------------------------------------------
+   HEADING EMPHASIS
+   A single word inside a heading, lit. The wrapper keeps it on one line, so
+   the glow never straddles a line break and lands as two half-glows.
+   -------------------------------------------------------------------------- */
+.term-lit {
+  color: var(--term-accent);
+  text-shadow: var(--term-glow-text-2);
+  white-space: nowrap;
+}

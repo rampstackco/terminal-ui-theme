@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nightjar | terminal-ui-theme demo</title>
+    <meta
+      name="description"
+      content="A fictional log-tailing product, built entirely from the terminal-ui-theme tokens and components. No build step, no framework, no dependencies."
+    />
+
+    <!-- The real token file and the real component files. This page holds no
+         copy of any of them, and declares no color of its own. Change a value
+         in tokens/tokens.css and this page changes with it. -->
+    <link rel="stylesheet" href="../tokens/tokens.css" />
+    <link rel="stylesheet" href="../components/components.css" />
+    <link rel="stylesheet" href="../components/glow.css" />
+
+    <style>
+      /* Layout for this page only. Tokens throughout, not one literal. */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--term-ground);
+        color: var(--term-ink);
+        font-family: var(--term-font-sans);
+        font-size: var(--term-text-body);
+        line-height: var(--term-leading-body);
+      }
+
+      .skip {
+        position: absolute;
+        left: -9999px;
+      }
+
+      .skip:focus {
+        left: var(--term-space-4);
+        top: var(--term-space-4);
+        z-index: 50;
+        padding: var(--term-space-3) var(--term-space-4);
+        background: var(--term-surface);
+        border: var(--term-border-width) solid var(--term-accent);
+        border-radius: var(--term-radius);
+        font-family: var(--term-font-mono);
+      }
+
+      .wrap {
+        max-width: var(--term-container);
+        margin: 0 auto;
+        padding-left: var(--term-space-4);
+        padding-right: var(--term-space-4);
+      }
+
+      @media (min-width: 768px) {
+        .wrap {
+          padding-left: var(--term-space-6);
+          padding-right: var(--term-space-6);
+        }
+      }
+
+      section {
+        padding-top: var(--term-space-12);
+        padding-bottom: var(--term-space-12);
+      }
+
+      @media (min-width: 768px) {
+        section {
+          padding-top: var(--term-space-16);
+          padding-bottom: var(--term-space-16);
+        }
+      }
+
+      .band {
+        border-top: var(--term-border-width) solid var(--term-border-color);
+      }
+
+      .band-surface {
+        background: var(--term-surface);
+      }
+
+      /* ---- Hero ---- */
+      .hero-grid {
+        display: grid;
+        gap: var(--term-space-8);
+        align-items: start;
+      }
+
+      @media (min-width: 960px) {
+        .hero-grid {
+          grid-template-columns: 0.85fr 1.15fr;
+          gap: var(--term-space-12);
+        }
+      }
+
+      .eyebrow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--term-space-2);
+        margin: 0 0 var(--term-space-6);
+      }
+
+      h1 {
+        margin: 0;
+        font-family: var(--term-font-mono);
+        font-size: var(--term-text-h1);
+        font-weight: var(--term-weight-bold);
+        line-height: var(--term-leading-tight);
+        letter-spacing: var(--term-tracking-tight);
+        text-wrap: balance;
+      }
+
+      @media (min-width: 768px) {
+        h1 {
+          font-size: var(--term-text-display);
+        }
+      }
+
+      .lead {
+        max-width: var(--term-measure);
+        margin: var(--term-space-6) 0 0;
+        font-size: var(--term-text-lead);
+        color: var(--term-ink-muted);
+      }
+
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--term-space-3);
+        margin-top: var(--term-space-8);
+      }
+
+      .fine {
+        margin: var(--term-space-4) 0 0;
+        font-family: var(--term-font-mono);
+        font-size: var(--term-text-xs);
+        color: var(--term-ink-faint);
+      }
+
+      /* The one command line on the page. It is the hero's proof: the whole
+         product is one command, so the command is the screenshot. */
+      .cmd {
+        display: flex;
+        align-items: center;
+        gap: var(--term-prompt-gap);
+        margin-top: var(--term-space-8);
+        padding: var(--term-space-3) var(--term-space-4);
+        background: var(--term-surface);
+        border: var(--term-border-width) solid var(--term-border-color);
+        border-radius: var(--term-radius);
+        font-family: var(--term-font-mono);
+        font-size: var(--term-text-sm);
+        overflow-x: auto;
+      }
+
+      .cmd code {
+        white-space: nowrap;
+      }
+
+      /* ---- Section headings ---- */
+      h2 {
+        margin: 0;
+        font-family: var(--term-font-mono);
+        font-size: var(--term-text-h2);
+        font-weight: var(--term-weight-bold);
+        line-height: var(--term-leading-snug);
+        letter-spacing: var(--term-tracking-tight);
+        text-wrap: balance;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: var(--term-space-8);
+      }
+
+      .section-lead {
+        max-width: var(--term-measure);
+        margin: var(--term-space-3) 0 var(--term-space-8);
+        color: var(--term-ink-muted);
+      }
+
+      /* The section mark. One per section is the ceiling, and this page uses
+         two across three sections. */
+      .section-mark {
+        flex: none;
+        display: none;
+      }
+
+      @media (min-width: 768px) {
+        .section-mark {
+          display: block;
+        }
+      }
+
+      .cards {
+        display: grid;
+        gap: var(--term-space-4);
+        grid-template-columns: 1fr;
+      }
+
+      @media (min-width: 900px) {
+        .cards {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      /* ---- Config ---- */
+      .config-grid {
+        display: grid;
+        gap: var(--term-space-8);
+        align-items: start;
+      }
+
+      @media (min-width: 900px) {
+        .config-grid {
+          grid-template-columns: 0.9fr 1.1fr;
+          gap: var(--term-space-12);
+        }
+      }
+
+      pre {
+        overflow-x: auto;
+        margin: 0;
+        padding: var(--term-space-4);
+        background: var(--term-ground);
+        border: var(--term-border-width) solid var(--term-border-color);
+        border-radius: var(--term-radius);
+      }
+
+      code {
+        font-family: var(--term-font-mono);
+        font-size: var(--term-text-sm);
+        line-height: var(--term-leading-dense);
+      }
+
+      .checks {
+        margin: var(--term-space-6) 0 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: var(--term-space-3);
+      }
+
+      .checks li {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: var(--term-space-3);
+        align-items: baseline;
+        color: var(--term-ink-muted);
+        font-size: var(--term-text-sm);
+      }
+
+      .checks strong {
+        color: var(--term-ink);
+        font-weight: var(--term-weight-medium);
+      }
+
+      /* ---- Signup ---- */
+      .signup {
+        display: grid;
+        gap: var(--term-space-3);
+        max-width: 460px;
+        margin-top: var(--term-space-8);
+      }
+
+      @media (min-width: 560px) {
+        .signup {
+          grid-template-columns: 1fr auto;
+          align-items: end;
+        }
+      }
+
+      /* ---- Footer ---- */
+      footer {
+        background: var(--term-surface);
+        border-top: var(--term-border-width) solid var(--term-border-color);
+        padding: var(--term-space-8) 0;
+      }
+
+      .foot-inner {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--term-space-6);
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .foot-note {
+        max-width: var(--term-measure);
+        margin: 0;
+        font-size: var(--term-text-sm);
+        color: var(--term-ink-faint);
+      }
+
+      .foot-note a {
+        color: var(--term-ink-muted);
+      }
+    </style>
+  </head>
+
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <nav class="term-nav" aria-label="Main">
+      <div class="term-nav-inner">
+        <a class="term-nav-brand" href="#main">
+          <!-- The brand lockup is the prompt chevron and the name, which is the
+               smallest possible statement of this whole register. Inlined from
+               assets/prompt-chevron.svg so it can read the tokens. -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 16 24"
+            width="16"
+            height="24"
+            class="term-prompt-mark"
+            aria-hidden="true"
+          >
+            <path
+              class="term-art-line"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.25"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4.5 6 L 11.5 12 L 4.5 18"
+            />
+          </svg>
+          nightjar
+        </a>
+
+        <ul class="term-nav-links">
+          <li><a class="term-nav-link" href="#main" aria-current="page">Tail</a></li>
+          <li><a class="term-nav-link" href="#rules">Rules</a></li>
+          <li><a class="term-nav-link" href="#config">Config</a></li>
+          <li><a class="term-nav-link" href="#start">Pricing</a></li>
+        </ul>
+
+        <a class="term-btn term-btn-sm term-btn-accent term-nav-cta" href="#start">Sign in</a>
+
+        <details class="term-nav-disclosure">
+          <summary aria-label="Open menu">Menu</summary>
+          <ul class="term-nav-panel">
+            <li><a class="term-nav-link" href="#main" aria-current="page">Tail</a></li>
+            <li><a class="term-nav-link" href="#rules">Rules</a></li>
+            <li><a class="term-nav-link" href="#config">Config</a></li>
+            <li><a class="term-nav-link" href="#start">Pricing</a></li>
+            <li><a class="term-nav-link" href="#start">Sign in</a></li>
+          </ul>
+        </details>
+      </div>
+    </nav>
+
+    <main id="main">
+      <!-- ================= HERO ================= -->
+      <section aria-labelledby="hero-heading">
+        <div class="wrap hero-grid">
+          <div>
+            <p class="eyebrow">
+              <span class="term-chip term-chip-info"><span class="term-dot"></span>v0.7</span>
+              <span class="term-chip term-chip-idle"><span class="term-dot"></span>Self-host</span>
+            </p>
+
+            <!-- The page's one tier-2 glow, on one word. -->
+            <h1 id="hero-heading">
+              Every log you have,<br />
+              <span class="term-lit">one stream</span>.
+            </h1>
+
+            <p class="lead">
+              Nightjar tails every service you run into a single window and
+              keeps the line that matters where you can see it. Rules promote a
+              line; nothing else moves.
+            </p>
+
+            <div class="cmd">
+              <span class="term-prompt-mark" aria-hidden="true">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 16 24"
+                  width="16"
+                  height="24"
+                  aria-hidden="true"
+                >
+                  <g
+                    class="term-art-line"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M11.5 8.4 C 11.5 6.6, 10 5.6, 8 5.6 C 6 5.6, 4.6 6.6, 4.6 8.3 C 4.6 11.8, 11.5 10.6, 11.5 14.4 C 11.5 16.4, 10 17.6, 8 17.6 C 6 17.6, 4.5 16.4, 4.5 14.6" />
+                    <path d="M8 3.2 L 8 20.8" />
+                  </g>
+                </svg>
+              </span>
+              <code>nightjar tail --all</code>
+              <span class="term-cursor" aria-hidden="true"></span>
+            </div>
+
+            <div class="cta-row">
+              <a class="term-btn term-btn-accent" href="#start">Start tailing</a>
+              <a class="term-btn term-btn-default" href="#config">Read the config</a>
+            </div>
+
+            <p class="fine">Free for three services. No card, no sales call.</p>
+          </div>
+
+          <!-- The one lead panel on the page, and the only tier-2 edge glow.
+               Everything else on the page is a hairline. -->
+          <div class="term-panel term-panel-lead term-panel-flush">
+            <div class="term-panel-head">
+              <h2 class="term-panel-title">tail --all</h2>
+              <span class="term-chip term-chip-ok"><span class="term-dot"></span>Live</span>
+            </div>
+
+            <div class="term-panel-body">
+              <ul class="term-log term-log-wide">
+                <li class="term-log-row">
+                  <span class="term-log-time">08:14:02</span>
+                  <span class="term-log-level term-log-level-info">info</span>
+                  <span class="term-log-source">api-gateway</span>
+                  <span class="term-log-msg">accepted 1,204 req in 60s, p99 84ms</span>
+                </li>
+                <li class="term-log-row">
+                  <span class="term-log-time">08:14:07</span>
+                  <span class="term-log-level term-log-level-ok">ok</span>
+                  <span class="term-log-source">billing-sync</span>
+                  <span class="term-log-msg">reconciled 318 invoices, 0 drift</span>
+                </li>
+                <li class="term-log-row term-log-row-fail">
+                  <span class="term-log-time">08:14:11</span>
+                  <span class="term-log-level term-log-level-fail">fail</span>
+                  <span class="term-log-source">image-worker</span>
+                  <span class="term-log-msg">upload aborted after 3 retries: connection reset by peer</span>
+                </li>
+                <li class="term-log-row">
+                  <span class="term-log-time">08:14:11</span>
+                  <span class="term-log-level term-log-level-warn">warn</span>
+                  <span class="term-log-source">image-worker</span>
+                  <span class="term-log-msg">queue depth 812, above the 500 mark for 4m</span>
+                </li>
+                <li class="term-log-row">
+                  <span class="term-log-time">08:14:19</span>
+                  <span class="term-log-level term-log-level-info">info</span>
+                  <span class="term-log-source">api-gateway</span>
+                  <span class="term-log-msg">cache warm, 41,900 keys resident</span>
+                </li>
+                <li class="term-log-row term-log-row-live">
+                  <span class="term-log-time">08:14:23</span>
+                  <span class="term-log-level term-log-level-ok">ok</span>
+                  <span class="term-log-source">image-worker</span>
+                  <span class="term-log-msg">retry succeeded, queue draining</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="term-panel-foot">
+              <button class="term-btn term-btn-sm term-btn-default" type="button">Pin</button>
+              <button class="term-btn term-btn-sm term-btn-default" type="button">Filter</button>
+              <button class="term-btn term-btn-sm term-btn-danger" type="button">Mute source</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= RULES ================= -->
+      <section id="rules" class="band band-surface" aria-labelledby="rules-heading">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <h2 id="rules-heading">A rule promotes a line. Nothing else does.</h2>
+              <p class="section-lead">
+                Every team already ships logs somewhere. What they usually do not
+                have is agreement about which line was worth waking up for, and
+                a place that agreement is written down.
+              </p>
+            </div>
+
+            <!-- This section's mark, and the page's one lit glyph. This is the
+                 section to spend it on: it is the only one with no accent
+                 element of its own, so the lit mark is not competing with a
+                 filled button for the single "here" the register allows per
+                 screen. Inlined from assets/glyph-stream.svg so the paint rules
+                 in glow.css can reach it. Decorative. -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 96 96"
+              width="96"
+              height="96"
+              class="term-glyph term-glyph-lit section-mark"
+              aria-hidden="true"
+            >
+              <g
+                class="term-art-line"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+              >
+                <path d="M12 14 L 12 82" />
+                <path d="M24 20 L 84 20" />
+                <path d="M24 32 L 62 32" />
+                <path d="M24 44 L 78 44" />
+                <path d="M24 56 L 48 56" />
+                <path d="M24 68 L 71 68" />
+                <path d="M24 80 L 57 80" />
+              </g>
+            </svg>
+          </div>
+
+          <div class="cards">
+            <div class="term-panel">
+              <div class="term-panel-head">
+                <h3 class="term-panel-title">In the repo</h3>
+                <span class="term-chip term-chip-idle">nightjar.toml</span>
+              </div>
+              <p class="term-panel-body">
+                Rules live in the service they watch and get reviewed like
+                anything else in it. The rule that paged you at 3am is in the
+                diff, with a name on it and a reason underneath.
+              </p>
+            </div>
+
+            <div class="term-panel">
+              <div class="term-panel-head">
+                <h3 class="term-panel-title">One window</h3>
+                <span class="term-chip term-chip-ok">tail --all</span>
+              </div>
+              <p class="term-panel-body">
+                Forty services in one stream, ordered by when the line was
+                written rather than by when it arrived. Clock skew is corrected
+                at ingest, so the order you read is the order things happened.
+              </p>
+            </div>
+
+            <div class="term-panel">
+              <div class="term-panel-head">
+                <h3 class="term-panel-title">Nothing is dropped</h3>
+                <span class="term-chip term-chip-warn">retained</span>
+              </div>
+              <p class="term-panel-body">
+                A promoted line is a view, not a filter. The rest of the stream
+                is still there and still queryable, which is what makes it safe
+                to write an aggressive rule.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= CONFIG ================= -->
+      <section id="config" class="band" aria-labelledby="config-heading">
+        <div class="wrap config-grid">
+          <div>
+            <h2 id="config-heading">Twelve lines, checked in.</h2>
+            <p class="section-lead" style="margin-bottom: 0">
+              One file at the root of the service. Nightjar reads it on every
+              deploy and applies the rules to the stream as it arrives.
+            </p>
+
+            <ul class="checks">
+              <li>
+                <span class="term-chip term-chip-idle" aria-hidden="true">1</span>
+                <span><strong>No agent.</strong> It reads the stdout you already write.</span>
+              </li>
+              <li>
+                <span class="term-chip term-chip-idle" aria-hidden="true">2</span>
+                <span><strong>No new query language.</strong> Rules are patterns and thresholds.</span>
+              </li>
+              <li>
+                <span class="term-chip term-chip-idle" aria-hidden="true">3</span>
+                <span><strong>No silent drop.</strong> A rule promotes a line, it never removes one.</span>
+              </li>
+            </ul>
+          </div>
+
+          <pre><code>service = "image-worker"
+
+[[rule]]
+name    = "upload gave up"
+match   = "aborted after * retries"
+level   = "fail"
+promote = true
+
+[[rule]]
+name      = "queue backing up"
+metric    = "queue.depth"
+above     = 500
+sustained = "3m"
+level     = "warn"</code></pre>
+        </div>
+      </section>
+
+      <!-- ================= SIGNUP ================= -->
+      <section id="start" class="band band-surface" aria-labelledby="start-heading">
+        <div class="wrap">
+          <div class="section-head">
+            <div>
+              <h2 id="start-heading">Point it at one noisy service.</h2>
+              <p class="section-lead" style="margin-bottom: 0">
+                Pick the service you most dread opening. If Nightjar has not
+                found you something you would rather have known within two
+                weeks, delete the file and nothing about your logging changed.
+              </p>
+
+              <form class="signup" onsubmit="return false">
+                <div class="term-field">
+                  <label class="term-label" for="email">Work email</label>
+                  <input
+                    class="term-input"
+                    id="email"
+                    type="email"
+                    name="email"
+                    placeholder="you@company.com"
+                    autocomplete="email"
+                  />
+                </div>
+                <button class="term-btn term-btn-accent" type="submit">Get the beta</button>
+              </form>
+
+              <p class="fine">
+                Nightjar is a fictional product. This page exists to show a theme.
+              </p>
+            </div>
+
+            <!-- This section's mark, unlit. The accent in this section is
+                 already spent on the submit button, and a lit mark beside a
+                 filled accent button gives the reader two things claiming to
+                 be the one place to look. Inlined from assets/glyph-frame.svg.
+                 Decorative. -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 96 96"
+              width="96"
+              height="96"
+              class="term-glyph section-mark"
+              aria-hidden="true"
+            >
+              <g
+                class="term-art-line"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M12 38 L 12 12 L 38 12" />
+                <path d="M58 12 L 84 12 L 84 38" />
+                <path d="M84 58 L 84 84 L 58 84" />
+                <path d="M38 84 L 12 84 L 12 58" />
+              </g>
+            </svg>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap foot-inner">
+        <a class="term-nav-brand" href="#main">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 16 24"
+            width="16"
+            height="24"
+            class="term-prompt-mark"
+            aria-hidden="true"
+          >
+            <path
+              class="term-art-line"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.25"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4.5 6 L 11.5 12 L 4.5 18"
+            />
+          </svg>
+          nightjar
+        </a>
+
+        <p class="foot-note">
+          Built with
+          <a href="https://github.com/rampstackco/terminal-ui-theme">terminal-ui-theme</a>.
+          No build step, no framework, no dependencies. Every value on this page
+          comes from <a href="../tokens/tokens.css">tokens.css</a>.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 24" width="16" height="24"
+     class="term-prompt-mark term-mark-cursor" role="img" aria-label="Block cursor">
+  <!-- The block cursor as geometry, for the places that need a cursor inside
+       an SVG or as a static mark. The live one in a page is a styled span
+       instead, because it has to blink and an animated SVG would put the
+       interval somewhere other than the token that governs it.
+
+       The block is 10x15 on the 16x24 cell rather than filling it: a cursor
+       that fills its cell edge to edge has no gap to the character beside it
+       and the column stops reading as separate cells.
+
+       Filled, so it takes its color from the surrounding text unless
+       components/glow.css overrides it. -->
+  <rect class="term-art-fill" fill="currentColor" x="3" y="5" width="10" height="15" />
+</svg>

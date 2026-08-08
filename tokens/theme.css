@@ -1,0 +1,253 @@
+/* ==========================================================================
+   terminal-ui-theme / Tailwind v4 adapter
+   --------------------------------------------------------------------------
+   Maps the tokens onto Tailwind's theme namespaces so you get utilities like
+   bg-term-ground, text-shadow-term-glow, border-term, text-term-h1.
+
+   There is not one literal value in this file. Every entry points at a custom
+   property declared in tokens.css, which stays the single source of truth. If
+   you want to change a value, change it there.
+
+   `@theme inline` is required rather than plain `@theme`: it makes the
+   generated utility carry the underlying var() reference instead of pointing
+   back at the theme variable, which is what keeps the token resolvable when
+   it was declared outside the utility's scope.
+
+   VERIFICATION.
+
+   Every namespace below was compiled and read back rather than assumed. An
+   entry filed under a namespace Tailwind does not process raises no error and
+   produces no utility, so an adapter can look complete in the file and ship
+   nothing.
+
+   Method: this file and tokens.css compiled through @tailwindcss/postcss,
+   candidates forced with @source inline() so nothing depends on scanning, and
+   the output parsed as DECLARATIONS with postcss rather than grepped for class
+   names. A grep for a class name cannot tell you which property it set, and
+   the trap at the bottom of this comment is exactly a class that compiles to
+   the wrong property. Stock p-4 is compiled alongside as the check that the
+   compiler ran at all.
+
+   Run on tailwindcss 4.3.3 and 4.1.14 under Node 24.14.0, identical results on
+   both. 58 entries across 14 namespaces, all 14 generate.
+
+   4.0.0 is recorded as untested rather than as passing. It was installed and
+   run here and the CLI aborts before compiling anything, with:
+
+     Error: Missing field `negated` on ScannerOptions.sources
+
+   That is the 4.0.0 binary failing against this Node, not a result about the
+   adapter, so nothing is claimed about 4.0.x in either direction. Note that
+   --text-shadow-* utilities arrived after 4.0 in any case, so a 4.0 consumer
+   would want the v3 route for the glow text tiers even if the CLI ran.
+
+     namespace                  n  in docs table  sample utility
+     --color-*                 16  yes            bg-term-ground
+     --shadow-*                 2  yes            shadow-term-glow
+     --text-shadow-*            2  NO             text-shadow-term-glow
+     --radius-*                 3  yes            rounded-term
+     --border-width-*           2  NO             border-term
+     --font-*                   2  yes            font-term-mono
+     --font-weight-*            3  yes            font-term-bold
+     --text-*                   8  yes            text-term-display
+     --leading-*                4  yes            leading-term-dense
+     --tracking-*               2  yes            tracking-term-wide
+     --spacing-*               10  yes            p-term-4, w-term-glyph
+     --container-*              1  yes            max-w-term
+     --ease-*                   1  yes            ease-term
+     --grid-template-columns-*  2  NO             grid-cols-term-row
+
+   CONTROLS, so those results are not an artifact of how they were measured.
+
+     Per namespace: delete every line in it and recompile. In all 14 cases the
+     sample utility disappears from the output entirely. Those lines are what
+     produce it, and nothing else in the file does.
+
+     A namespace the engine does not process: --border-style-* was compiled
+     alongside and produces nothing at all, silently. That is the failure this
+     verification exists to catch, and the same harness sees the difference
+     between it and the 14 above.
+
+     Distinguishable names, not only distinguishable values. A first pass of
+     this harness named every probe the same and reported four namespaces as
+     working when the results had come from --color-*. Several utility
+     prefixes are shared: border- is served by both --border-width-* and
+     --color-*, font- by both --font-* and --font-weight-*, text- by both
+     --text-* and --color-*. A confounded probe reads exactly like a clean one.
+
+   THREE NAMESPACES ABOVE ARE MARKED NO.
+
+   --text-shadow-*, --border-width-* and --grid-template-columns-* are absent
+   from the namespace table in Tailwind's theme documentation, which lists
+   twenty and none of those three. The engine supports all three anyway, on
+   both versions tested. They are used here because they produce the names a
+   reader expects to find (border-term next to rounded-term), and they are
+   flagged because an undocumented namespace carries no compatibility promise:
+   a future release can drop one without that counting as a breaking change.
+
+   Absence from the table does not predict absence from the engine, and that
+   cuts both ways. --outline-width-* is also missing from the table and was
+   compiled here purely as a negative control, on the assumption it would
+   produce nothing. It generates: outline-term would work. The assumption was
+   wrong, which is the whole reason this file measures instead of reasoning.
+
+   ESCAPE ROUTES, each compiled rather than inferred. If any of the three is
+   dropped, no new token is needed, because the value already lives in
+   tokens.css. These pairs emit identical declarations:
+
+     border-term        ->  border-(length:--term-border-width)
+     border-t-term      ->  border-t-(length:--term-border-width)
+     border-b-term      ->  border-b-(length:--term-border-width)
+     border-x-term      ->  border-x-(length:--term-border-width)
+                            border-[length:var(--term-border-width)] is longhand
+
+     text-shadow-term-glow  ->  text-shadow-(--term-glow-text-1)
+     grid-cols-term-row     ->  grid-cols-(--term-grid-row)
+
+   THE length: HINT IS LOAD-BEARING, AND ONLY ON THE BORDER ROUTE. Drop it
+   there and Tailwind reads the variable as a color instead of a length. The
+   class still compiles, the rule is still valid CSS, and no border width is
+   set by it at all:
+
+     border-(--term-border-width)        border-color: var(--term-border-width)
+     border-[var(--term-border-width)]   border-color: var(--term-border-width)
+     border-t-(--term-border-width)      border-top-color: var(--term-border-width)
+
+   That is a border color declared as 1px, which sets nothing and warns about
+   nothing. Take the hinted forms above and no others.
+
+   The other two routes were compiled un-hinted and land on the right property
+   without a hint. The tempting explanation is that they have no color utility
+   competing for the shorthand, and that explanation is wrong: it was written
+   here first and then refuted by compiling it. text-shadow-red-500 exists, so
+   text-shadow has a color variant exactly as border does. What differs is
+   which one the un-hinted shorthand defaults to, and the two defaults are
+   opposite:
+
+     border-(--x)              ->  border-color: var(--x)
+     border-(length:--x)       ->  border-width: var(--x)
+
+     text-shadow-(--x)         ->  text-shadow: var(--x)
+     text-shadow-(color:--x)   ->  --tw-text-shadow-color: var(--x)
+
+   So on border- the hint buys you the length, and on text-shadow- the hint
+   buys you the color. Neither route can be inferred from the other, which is
+   the reason both were compiled with this repo's own prefix rather than
+   copied from a sibling theme that had already worked one of them out.
+
+   ONE MORE TRAP, ON THE GRID ROW.
+
+   The log row's track list is filed under --grid-template-columns-* and not
+   under --columns-*, which looks like the natural home for anything about
+   columns. --columns-* was compiled here: it produces the CSS `columns`
+   property, which is multi-column newspaper flow, not grid. A column count
+   filed there compiles to a valid rule that lays the page out in flowed text
+   columns. Any grid track list goes through --grid-template-columns-*, where
+   the utility emits the real track list with the var() surviving:
+
+     grid-cols-term-row  ->  grid-template-columns: var(--term-grid-row)
+
+   Usage in your stylesheet:
+
+     @import "tailwindcss";
+     @import "./path/to/tokens/theme.css";
+
+   theme.css pulls in tokens.css itself, so one import is enough.
+   ========================================================================== */
+
+@import "./tokens.css";
+
+@theme inline {
+  /* Grounds */
+  --color-term-ground: var(--term-ground);
+  --color-term-surface: var(--term-surface);
+  --color-term-surface-raised: var(--term-surface-raised);
+
+  /* Ink */
+  --color-term-ink: var(--term-ink);
+  --color-term-ink-muted: var(--term-ink-muted);
+  --color-term-ink-faint: var(--term-ink-faint);
+
+  /* Rule */
+  --color-term-line: var(--term-line);
+  --color-term-line-strong: var(--term-line-strong);
+
+  /* Accent */
+  --color-term-accent: var(--term-accent);
+  --color-term-accent-ink: var(--term-accent-ink);
+
+  /* Status */
+  --color-term-ok: var(--term-status-ok);
+  --color-term-warn: var(--term-status-warn);
+  --color-term-fail: var(--term-status-fail);
+  --color-term-info: var(--term-status-info);
+  --color-term-idle: var(--term-status-idle);
+  --color-term-status-ink: var(--term-status-ink);
+
+  /* Glow, edge tier. Filed under --shadow-* because a glow is a box-shadow
+     with no offset, which is the same declaration Tailwind is already
+     generating for that namespace. */
+  --shadow-term-glow: var(--term-glow-edge-1);
+  --shadow-term-glow-2: var(--term-glow-edge-2);
+
+  /* Glow, text tier. */
+  --text-shadow-term-glow: var(--term-glow-text-1);
+  --text-shadow-term-glow-2: var(--term-glow-text-2);
+
+  /* Radius */
+  --radius-term-none: var(--term-radius-none);
+  --radius-term: var(--term-radius);
+  --radius-term-full: var(--term-radius-full);
+
+  /* Border width */
+  --border-width-term: var(--term-border-width);
+  --border-width-term-heavy: var(--term-border-width-heavy);
+
+  /* Type */
+  --font-term-mono: var(--term-font-mono);
+  --font-term-sans: var(--term-font-sans);
+
+  --font-weight-term-body: var(--term-weight-body);
+  --font-weight-term-medium: var(--term-weight-medium);
+  --font-weight-term-bold: var(--term-weight-bold);
+
+  --text-term-display: var(--term-text-display);
+  --text-term-h1: var(--term-text-h1);
+  --text-term-h2: var(--term-text-h2);
+  --text-term-h3: var(--term-text-h3);
+  --text-term-lead: var(--term-text-lead);
+  --text-term-body: var(--term-text-body);
+  --text-term-sm: var(--term-text-sm);
+  --text-term-xs: var(--term-text-xs);
+
+  --leading-term-tight: var(--term-leading-tight);
+  --leading-term-snug: var(--term-leading-snug);
+  --leading-term-dense: var(--term-leading-dense);
+  --leading-term-body: var(--term-leading-body);
+
+  --tracking-term-tight: var(--term-tracking-tight);
+  --tracking-term-wide: var(--term-tracking-wide);
+
+  /* Space. Named to sit alongside Tailwind's own scale, not to replace it. */
+  --spacing-term-1: var(--term-space-1);
+  --spacing-term-2: var(--term-space-2);
+  --spacing-term-3: var(--term-space-3);
+  --spacing-term-4: var(--term-space-4);
+  --spacing-term-6: var(--term-space-6);
+  --spacing-term-8: var(--term-space-8);
+  --spacing-term-12: var(--term-space-12);
+  --spacing-term-16: var(--term-space-16);
+  --spacing-term-24: var(--term-space-24);
+  --spacing-term-glyph: var(--term-glyph-size);
+
+  --container-term: var(--term-container);
+
+  /* Motion */
+  --ease-term: var(--term-ease);
+
+  /* The log row. See the header: this is filed under
+     --grid-template-columns-* and not under --columns-*, which compiles to
+     CSS multi-column rather than to grid. */
+  --grid-template-columns-term-row: var(--term-grid-row);
+  --grid-template-columns-term-row-wide: var(--term-grid-row-wide);
+}
