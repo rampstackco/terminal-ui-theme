@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96"
+     class="term-glyph term-glyph-stream" role="img" aria-label="Log stream mark">
+  <!-- The stream mark: a pipe on the left and six rows running off it, drawn
+       at unequal lengths. The lengths are not random and not even, they step
+       down and back up the way real log lines do, which is what makes the
+       mark read as output rather than as a hamburger menu.
+
+       The rows stop short of the right edge at unequal distances so the ragged
+       margin is on the right, where a text renderer puts it. A block-justified
+       set of rows would read as a table.
+
+       Stroke only, so it takes its color from the surrounding text unless
+       components/glow.css overrides it. -->
+  <g class="term-art-line" fill="none" stroke="currentColor" stroke-width="3"
+     stroke-linecap="round">
+    <!-- the pipe -->
+    <path d="M12 14 L 12 82" />
+    <!-- the rows -->
+    <path d="M24 20 L 84 20" />
+    <path d="M24 32 L 62 32" />
+    <path d="M24 44 L 78 44" />
+    <path d="M24 56 L 48 56" />
+    <path d="M24 68 L 71 68" />
+    <path d="M24 80 L 57 80" />
+  </g>
+</svg>

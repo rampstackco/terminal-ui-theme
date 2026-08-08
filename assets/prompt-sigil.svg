@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 24" width="16" height="24"
+     class="term-prompt-mark term-mark-sigil" role="img" aria-label="Shell prompt sigil">
+  <!-- The shell sigil, on the same 16x24 cell as the chevron. Two strokes: an
+       S drawn as a pair of opposing cubics, and the bar running through it.
+       The bar overshoots the S at both ends by about two units, which is what
+       the glyph does in every monospace face and what stops it reading as a
+       figure 5.
+
+       Stroke only, so it takes its color from the surrounding text unless
+       components/glow.css overrides it. -->
+  <g class="term-art-line" fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round">
+    <path d="M11.5 8.4 C 11.5 6.6, 10 5.6, 8 5.6 C 6 5.6, 4.6 6.6, 4.6 8.3 C 4.6 11.8, 11.5 10.6, 11.5 14.4 C 11.5 16.4, 10 17.6, 8 17.6 C 6 17.6, 4.5 16.4, 4.5 14.6" />
+    <path d="M8 3.2 L 8 20.8" />
+  </g>
+</svg>
