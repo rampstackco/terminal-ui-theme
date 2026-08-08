@@ -27,11 +27,7 @@ No scanlines, no CRT curvature, no flicker. Those effects are a costume worn ove
 
 ## The demo
 
-The screenshot above is [`demo/index.html`](demo/index.html), a fictional log-tailing product called Nightjar. Clone the repo and open the file. There is no build step, no framework, no `node_modules`, and no server to start.
-
-<!-- TODO(public flip): once this repo is public and GitHub Pages is turned on for
-     the default branch, replace the relative link above with
-     https://rampstackco.github.io/terminal-ui-theme/demo/ -->
+The screenshot above is [`demo/index.html`](demo/index.html), a fictional log-tailing product called Nightjar. **[Open it live](https://rampstackco.github.io/terminal-ui-theme/demo/)**, or clone the repo and open the file. There is no build step, no framework, no `node_modules`, and no server to start.
 
 The demo declares no color of its own. It links `tokens/tokens.css`, `components/components.css` and `components/glow.css` and reads every value from them, so it stays honest about what the theme actually produces.
 
@@ -153,9 +149,9 @@ At the root is the hardware terminal and the shells that came after it: fixed ce
 
 At the polished pole is the register Linear popularised: near-black grounds, tight type, a single accent, restraint everywhere. That end has largely dropped the monospace display voice, which is the fork in the family. Keeping monospace for headings is the decision that tells a reader what kind of software they are looking at before they have read a word, and it is the one thing here that does not survive being softened.
 
-Real products mix registers rather than adopting one whole, and translucent surfaces layered over a dark ground are the most common addition to this one. Those effects live in the glassmorphism sibling rather than here, so composing the two is intended use. <!-- TODO(siblings): link the glassmorphism sibling repo here once it ships. -->
+Real products mix registers rather than adopting one whole, and translucent surfaces layered over a dark ground are the most common addition to this one. Those effects live in [glassmorphism-theme](https://github.com/rampstackco/glassmorphism-theme) rather than here, so composing the two is intended use. That repo's ground is built for this case, a dark base with light behind it, which is what a terminal palette already is.
 
-The other dev-native register in this collection is neobrutalism, and the two sit at the same relationship position and the same sensory ambition while disagreeing on the other two axes: neobrutalism is loud and amused where this one is quiet and precise. <!-- TODO(siblings): link the neobrutalism sibling repo here once it ships. -->
+The other dev-native register in this collection is [neobrutalism-theme](https://github.com/rampstackco/neobrutalism-theme), and the two sit at the same relationship position and the same sensory ambition while disagreeing on the other two axes: neobrutalism is loud and amused where this one is quiet and precise. Same reader, same distance from them, opposite volume.
 
 ## License and questions
 
