@@ -1,0 +1,611 @@
+/* ==========================================================================
+   terminal-ui-theme / components
+   --------------------------------------------------------------------------
+   Six components: button, panel, input, chip, nav, log.
+
+   The sixth is the one this register exists for. Every theme ships a button;
+   a dark dev-tool register that cannot render four hundred lines legibly has
+   not been finished.
+
+   Every value here is a var() reference to tokens.css. There is not one color
+   literal in this file, which is what makes retheming a matter of editing one
+   file rather than auditing six.
+
+   The class names follow the shadcn shape: one base class carrying the
+   structure, one variant class carrying the intent (term-btn + term-btn-accent).
+   If you are on shadcn already, these map onto its variant prop directly.
+
+   Requires tokens.css to be loaded first. Load it explicitly rather than
+   letting this file pull it in, so the dependency is visible at the call site:
+
+     <link rel="stylesheet" href="tokens/tokens.css" />
+     <link rel="stylesheet" href="components/components.css" />
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Shared behavior
+
+   Elevation in this register is a hairline and a ground step, never a shadow.
+   A shadow on a near-black ground has nothing to fall on: it either does not
+   render or it renders as a smudge, and both read as a bug. So the interactive
+   states move between grounds and between rule weights instead.
+   -------------------------------------------------------------------------- */
+.term-focusable:focus-visible {
+  outline: var(--term-ring-width) solid var(--term-ring);
+  outline-offset: var(--term-ring-offset);
+}
+
+/* ==========================================================================
+   BUTTON
+   Variants: term-btn-accent, term-btn-default, term-btn-ghost, term-btn-danger
+   Sizes:    term-btn-sm, (base)
+   ========================================================================== */
+.term-btn {
+  /* 44px minimum on both axes. Anything smaller fails on a real thumb. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--term-space-2);
+  min-height: 44px;
+  padding: var(--term-space-2) var(--term-space-4);
+
+  font-family: var(--term-font-mono);
+  font-size: var(--term-text-sm);
+  font-weight: var(--term-weight-medium);
+  line-height: var(--term-leading-snug);
+  text-decoration: none;
+  white-space: nowrap;
+
+  border: var(--term-border-width) solid var(--term-border-color);
+  border-radius: var(--term-radius);
+  cursor: pointer;
+
+  transition:
+    background-color var(--term-duration) var(--term-ease),
+    border-color var(--term-duration) var(--term-ease),
+    color var(--term-duration) var(--term-ease);
+}
+
+.term-btn:focus-visible {
+  outline: var(--term-ring-width) solid var(--term-ring);
+  outline-offset: var(--term-ring-offset);
+}
+
+.term-btn:disabled,
+.term-btn[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* The accent button is filled, and it is the only filled thing on a page of
+   this theme. A second fill in the accent color puts two "here" marks on the
+   same screen and the reader has to pick. */
+.term-btn-accent {
+  background: var(--term-accent);
+  color: var(--term-accent-ink);
+  border-color: var(--term-accent);
+  font-weight: var(--term-weight-bold);
+}
+
+.term-btn-accent:hover:not(:disabled) {
+  /* Lighten toward the ink rather than toward white: the accent has a hue and
+     a hover that desaturates it reads as a different color, not a brighter
+     one. */
+  background: color-mix(in srgb, var(--term-accent) 84%, var(--term-ink));
+  border-color: color-mix(in srgb, var(--term-accent) 84%, var(--term-ink));
+}
+
+.term-btn-default {
+  background: var(--term-surface);
+  color: var(--term-ink);
+}
+
+.term-btn-default:hover:not(:disabled) {
+  background: var(--term-surface-raised);
+  border-color: var(--term-line-strong);
+}
+
+.term-btn-ghost {
+  background: transparent;
+  color: var(--term-ink-muted);
+  border-color: transparent;
+}
+
+.term-btn-ghost:hover:not(:disabled) {
+  background: var(--term-surface);
+  color: var(--term-ink);
+}
+
+/* Destructive is outlined rather than filled, because the filled accent is
+   already spoken for and two fills would make the dangerous one look like the
+   default one. */
+.term-btn-danger {
+  background: transparent;
+  color: var(--term-status-fail);
+  border-color: color-mix(in srgb, var(--term-status-fail) 55%, transparent);
+}
+
+.term-btn-danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--term-status-fail) 14%, transparent);
+  border-color: var(--term-status-fail);
+}
+
+.term-btn-sm {
+  min-height: 44px; /* the visual box shrinks, the touch target does not */
+  padding: var(--term-space-1) var(--term-space-3);
+  font-size: var(--term-text-xs);
+}
+
+/* ==========================================================================
+   PANEL
+   Variants: (base), term-panel-flush, term-panel-lead
+   Parts:    term-panel-head, term-panel-title, term-panel-body, term-panel-foot
+   ========================================================================== */
+.term-panel {
+  display: flex;
+  flex-direction: column;
+  background: var(--term-surface);
+  color: var(--term-ink);
+  border: var(--term-border-width) solid var(--term-border-color);
+  border-radius: var(--term-radius);
+}
+
+.term-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--term-space-4);
+  padding: var(--term-space-3) var(--term-space-4);
+  border-bottom: var(--term-border-width) solid var(--term-border-color);
+}
+
+.term-panel-title {
+  margin: 0;
+  font-family: var(--term-font-mono);
+  font-size: var(--term-text-h3);
+  font-weight: var(--term-weight-bold);
+  line-height: var(--term-leading-snug);
+  letter-spacing: var(--term-tracking-tight);
+}
+
+.term-panel-body {
+  padding: var(--term-space-4);
+  font-size: var(--term-text-sm);
+  line-height: var(--term-leading-body);
+  color: var(--term-ink-muted);
+}
+
+/* A body that holds rows rather than prose takes no padding of its own, so the
+   rows can run edge to edge and their own rules meet the panel's. */
+.term-panel-flush > .term-panel-body {
+  padding: 0;
+}
+
+.term-panel-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--term-space-2);
+  padding: var(--term-space-3) var(--term-space-4);
+  border-top: var(--term-border-width) solid var(--term-border-color);
+}
+
+/* The one panel on a screen that owns it. Heavier rule and the tier-2 edge
+   glow, tinted by the panel's own color so a failing panel glows red and a
+   nominal one glows phosphor from the same declaration. */
+.term-panel-lead {
+  color: var(--term-accent);
+  border-width: var(--term-border-width-heavy);
+  border-color: color-mix(in srgb, currentColor 45%, var(--term-line));
+  box-shadow: var(--term-glow-edge-2);
+}
+
+/* The glow tints from `color`, so the panel's own text has to be set back to
+   ink or every word inside it would come out accent-colored. */
+.term-panel-lead > .term-panel-head,
+.term-panel-lead > .term-panel-body,
+.term-panel-lead > .term-panel-foot {
+  color: var(--term-ink);
+  border-color: var(--term-border-color);
+}
+
+.term-panel-lead > .term-panel-body {
+  color: var(--term-ink-muted);
+}
+
+/* ==========================================================================
+   INPUT
+   Parts:  term-field, term-label, term-input, term-hint, term-error
+   States: default, :focus, aria-invalid="true", :disabled
+   ========================================================================== */
+.term-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--term-space-2);
+}
+
+.term-label {
+  font-family: var(--term-font-mono);
+  font-size: var(--term-text-xs);
+  font-weight: var(--term-weight-medium);
+  letter-spacing: var(--term-tracking-wide);
+  text-transform: uppercase;
+  color: var(--term-ink-muted);
+}
+
+.term-input {
+  /* 16px minimum, which is what stops iOS Safari zooming on focus. */
+  width: 100%;
+  min-height: 44px;
+  padding: var(--term-space-2) var(--term-space-3);
+
+  font-family: var(--term-font-mono);
+  font-size: var(--term-text-body);
+  color: var(--term-ink);
+  background: var(--term-ground);
+
+  border: var(--term-border-width) solid var(--term-border-color);
+  border-radius: var(--term-radius);
+
+  transition:
+    border-color var(--term-duration) var(--term-ease),
+    box-shadow var(--term-duration) var(--term-ease);
+}
+
+.term-input::placeholder {
+  color: var(--term-ink-faint);
+}
+
+/* Focus is the accent rule plus tier-1 edge glow, which is the closest thing
+   this register has to a cursor landing in a field. The outline is kept as
+   well as the glow, because glow alone is a color cue and color alone is not
+   a focus indicator. */
+.term-input:focus {
+  outline: var(--term-ring-width) solid var(--term-ring);
+  outline-offset: var(--term-ring-offset);
+  border-color: var(--term-accent);
+}
+
+.term-input[aria-invalid="true"] {
+  border-color: var(--term-status-fail);
+}
+
+.term-input[aria-invalid="true"]:focus {
+  outline-color: var(--term-status-fail);
+}
+
+.term-input:disabled {
+  background: var(--term-surface);
+  color: var(--term-ink-faint);
+  cursor: not-allowed;
+}
+
+.term-hint {
+  font-family: var(--term-font-mono);
+  font-size: var(--term-text-xs);
+  color: var(--term-ink-faint);
+}
+
+.term-error {
+  font-family: var(--term-font-mono);
+  font-size: var(--term-text-xs);
+  font-weight: var(--term-weight-medium);
+  color: var(--term-status-fail);
+}
+
+.term-input:where(textarea) {
+  min-height: 120px;
+  resize: vertical;
+  line-height: var(--term-leading-dense);
+}
+
+/* ==========================================================================
+   CHIP
+   Variants: term-chip-idle, term-chip-ok, term-chip-warn, term-chip-fail,
+             term-chip-info
+   Modifier: term-chip-solid
+   ========================================================================== */
+.term-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--term-space-2);
+  padding: 0 var(--term-space-2);
+  min-height: 22px;
+
+  font-family: var(--term-font-mono);
+  font-size: var(--term-text-xs);
+  font-weight: var(--term-weight-medium);
+  line-height: var(--term-leading-snug);
+  letter-spacing: var(--term-tracking-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  border: var(--term-border-width) solid;
+  border-radius: var(--term-radius);
+
+  /* Tinted text on a tint of the same color, with the rule carrying the edge.
+     The tint is derived from `color` rather than declared per variant, so each
+     variant below sets exactly one property. */
+  color: var(--term-status-idle);
+  border-color: color-mix(in srgb, currentColor 40%, transparent);
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.term-chip-idle { color: var(--term-status-idle); }
+.term-chip-ok   { color: var(--term-status-ok); }
+.term-chip-warn { color: var(--term-status-warn); }
+.term-chip-fail { color: var(--term-status-fail); }
+.term-chip-info { color: var(--term-status-info); }
+
+/* The solid modifier is for a chip that has to survive on top of a busy row.
+   It reverses to ground-on-fill, where every status color clears 7:1. */
+.term-chip-solid {
+  background: currentColor;
+  border-color: currentColor;
+}
+
+.term-chip-solid > * {
+  color: var(--term-status-ink);
+}
+
+/* The dot is the shape half of the status encoding. Color alone would fail
+   anyone who cannot separate the phosphor green from the amber, so every
+   status in this theme is carried by a word as well, and the dot is what lets
+   the word stay short. */
+.term-dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--term-radius-full);
+  background: currentColor;
+}
+
+/* ==========================================================================
+   NAV
+   A header bar with a brand block, inline links on desktop, and a disclosure
+   panel on mobile. The disclosure is a <details> element, so the pattern
+   needs no JavaScript and keeps working with the page's scripts disabled.
+   ========================================================================== */
+.term-nav {
+  background: var(--term-surface);
+  border-bottom: var(--term-border-width) solid var(--term-border-color);
+}
+
+.term-nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--term-space-4);
+  max-width: var(--term-container);
+  margin: 0 auto;
+  padding: var(--term-space-2) var(--term-space-4);
+}
+
+.term-nav-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--term-prompt-gap);
+  font-family: var(--term-font-mono);
+  font-size: var(--term-text-h3);
+  font-weight: var(--term-weight-bold);
+  letter-spacing: var(--term-tracking-tight);
+  color: var(--term-ink);
+  text-decoration: none;
+}
+
+.term-nav-links {
+  display: none;
+  align-items: center;
+  gap: var(--term-space-1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.term-nav-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: var(--term-space-2) var(--term-space-3);
+
+  font-family: var(--term-font-mono);
+  font-size: var(--term-text-sm);
+  color: var(--term-ink-muted);
+  text-decoration: none;
+
+  border: var(--term-border-width) solid transparent;
+  border-radius: var(--term-radius);
+}
+
+.term-nav-link:hover {
+  color: var(--term-ink);
+  background: var(--term-surface-raised);
+}
+
+/* The current page is marked by the accent and by an underline, so the mark
+   does not rest on color alone. */
+.term-nav-link[aria-current="page"] {
+  color: var(--term-accent);
+  border-bottom-color: var(--term-accent);
+  border-radius: var(--term-radius-none);
+}
+
+.term-nav-link:focus-visible {
+  outline: var(--term-ring-width) solid var(--term-ring);
+  outline-offset: var(--term-ring-offset);
+}
+
+.term-nav-cta {
+  display: none;
+}
+
+/* Mobile disclosure */
+.term-nav-disclosure {
+  position: relative;
+}
+
+.term-nav-disclosure > summary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--term-space-2);
+  min-width: 44px;
+  min-height: 44px;
+  padding: var(--term-space-2) var(--term-space-3);
+
+  font-family: var(--term-font-mono);
+  font-size: var(--term-text-sm);
+  color: var(--term-ink);
+  background: var(--term-surface-raised);
+
+  border: var(--term-border-width) solid var(--term-border-color);
+  border-radius: var(--term-radius);
+  cursor: pointer;
+  list-style: none;
+}
+
+.term-nav-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.term-nav-disclosure > summary:focus-visible {
+  outline: var(--term-ring-width) solid var(--term-ring);
+  outline-offset: var(--term-ring-offset);
+}
+
+.term-nav-panel {
+  position: absolute;
+  right: 0;
+  z-index: 20;
+  min-width: 220px;
+  margin-top: var(--term-space-2);
+  padding: var(--term-space-1);
+
+  list-style: none;
+  background: var(--term-surface);
+  border: var(--term-border-width) solid var(--term-line-strong);
+  border-radius: var(--term-radius);
+}
+
+.term-nav-panel .term-nav-link {
+  display: flex;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .term-nav-inner {
+    padding: var(--term-space-2) var(--term-space-6);
+  }
+
+  .term-nav-links,
+  .term-nav-cta {
+    display: flex;
+  }
+
+  .term-nav-disclosure {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   LOG
+   The component this register exists for. A stream of rows on a fixed track
+   list, dense enough to be worth reading and legible enough to read.
+   Parts: term-log, term-log-row, term-log-time, term-log-level, term-log-msg
+   ========================================================================== */
+.term-log {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--term-ground);
+  font-family: var(--term-font-mono);
+  font-size: var(--term-text-sm);
+  line-height: var(--term-leading-dense);
+}
+
+.term-log-row {
+  display: grid;
+  grid-template-columns: var(--term-grid-row);
+  gap: var(--term-row-gap);
+  padding: var(--term-row-pad-y) var(--term-space-4);
+  border-bottom: var(--term-border-width) solid var(--term-border-color);
+}
+
+.term-log-row:last-child {
+  border-bottom: none;
+}
+
+.term-log-row:hover {
+  background: var(--term-surface-raised);
+}
+
+/* The wide variant adds a source column. Below the breakpoint the source is
+   the first thing to go, because on a phone the message is the only column
+   worth the width. */
+.term-log-wide > .term-log-row {
+  grid-template-columns: var(--term-grid-row-wide);
+}
+
+.term-log-time {
+  color: var(--term-ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.term-log-source {
+  color: var(--term-ink-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* The level is where the status color earns its place: it is the only column
+   the eye scans down, so it is the only column allowed to be colored. The
+   word is always present, so the color is a second channel rather than the
+   only one. */
+.term-log-level {
+  font-weight: var(--term-weight-medium);
+  letter-spacing: var(--term-tracking-wide);
+  text-transform: uppercase;
+  color: var(--term-status-idle);
+}
+
+.term-log-level-ok   { color: var(--term-status-ok); }
+.term-log-level-warn { color: var(--term-status-warn); }
+.term-log-level-fail { color: var(--term-status-fail); }
+.term-log-level-info { color: var(--term-status-info); }
+
+/* A long line wraps rather than scrolling the page sideways. overflow-wrap
+   alone does not break an unbroken token like a URL or a stack frame, which is
+   most of what actually overflows a log. */
+.term-log-msg {
+  color: var(--term-ink);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* The row that failed keeps a rule down its leading edge. Reading a log, the
+   eye travels the left margin, so that is where the mark has to be for it to
+   be found without reading the rows. */
+.term-log-row-fail {
+  box-shadow: inset var(--term-border-width-heavy) 0 0 0 var(--term-status-fail);
+  background: color-mix(in srgb, var(--term-status-fail) 7%, transparent);
+}
+
+@media (max-width: 767px) {
+  .term-log-row,
+  .term-log-wide > .term-log-row {
+    /* Two rows on a phone: the metadata line, then the message under it. A
+       three-column track list at 390px gives the message about 12 characters,
+       which is not a log, it is a column of hyphens. */
+    grid-template-columns: auto auto 1fr;
+    padding-left: var(--term-space-3);
+    padding-right: var(--term-space-3);
+  }
+
+  .term-log-msg {
+    grid-column: 1 / -1;
+  }
+
+  .term-log-source {
+    justify-self: start;
+  }
+}
