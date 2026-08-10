@@ -153,6 +153,14 @@ Real products mix registers rather than adopting one whole, and translucent surf
 
 The other dev-native register in this collection is [neobrutalism-theme](https://github.com/rampstackco/neobrutalism-theme), and the two sit at the same relationship position and the same sensory ambition while disagreeing on the other two axes: neobrutalism is loud and amused where this one is quiet and precise. Same reader, same distance from them, opposite volume.
 
+## This is a register, and the shells are a different thing
+
+Four repositories in this collection are **shells** rather than registers, and the distinction is the one most likely to send someone to the wrong repo.
+
+This repo is a register: a surface any ordinary page can wear. Your markup stays a page, and the theme changes what it looks like. A shell is a structure your site lives inside: it ships a window manager or a board, a taskbar or a dock, an enhancement contract and a focus model, and the register it wears is swappable. The two compose, and a shell wearing something close to this register is a normal thing to want.
+
+The one worth naming here is [game-console-ui-theme](https://github.com/rampstackco/game-console-ui-theme), because "terminal UI" and "console UI" are close enough in words to be far apart in fact. That repo is a room-scale board of tiles driven by arrow keys, on a dark ground, for a reader holding a remote control. It is not a console in this repo's sense of the word. If you want a page that looks like a terminal, you are in the right repo. If you want a site that behaves like a machine, the shells are [desktop-os-theme](https://github.com/rampstackco/desktop-os-theme) (the class's pilot, and where its [class-decision log](https://github.com/rampstackco/desktop-os-theme/blob/main/docs/class-decisions.md) lives), [retro-desktop-theme](https://github.com/rampstackco/retro-desktop-theme), [phone-launcher-theme](https://github.com/rampstackco/phone-launcher-theme) and game-console-ui-theme.
+
 ## License and questions
 
 MIT. See [LICENSE](LICENSE). Use it commercially, fork it, rename the tokens, ship it. No attribution required.
